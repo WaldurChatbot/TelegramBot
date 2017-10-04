@@ -21,3 +21,4 @@ __pycache__/
 # chatterbot db
 chatterbotdb.sqlite3.db
 
+*.log
