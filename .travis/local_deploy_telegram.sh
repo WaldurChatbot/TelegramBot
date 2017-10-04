@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # the target should already have cloned this repo
-cd Telegram 
+cd TelegramBot
 
 # if supplied argument is 'dev', use develop branch
 if [ ! -z $1 ]; then
