@@ -1,32 +1,36 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from common import request
+from common.request import Connection
 from telegram.ext import Updater, MessageHandler, Filters
-import logging, logging.config, logging.handlers
+import logging.config
+import logging
 from configparser import ConfigParser
 
-logging.config.fileConfig('../logging_config.ini', disable_existing_loggers = False)
+logging.config.fileConfig('../logging_config.ini')
+log = logging.getLogger(__name__)
 
-log = logging.getLogger("Telegram")
+log.info("Read configuration")
+config = ConfigParser()
+config.read('../configuration.ini')
+token = config['telegram']['token']
+url   = config['backend']['url'] + ':' + config['backend']['port']
+
+conn = Connection(url)
 
 
 def query(bot, update):
     log.debug("IN: " + update.message.text)
     if update.message.text[:1] == '!':
-        query = update.message.text[1:]
-        log.info("IN:  " + query)
-        response = request.query(query)
+        message = update.message.text[1:]
+        log.info("IN:  " + message)
+        response = conn.query(message)
         log.info("OUT: " + response['message'])
         update.message.reply_text(response['message'])
 
 
 def main():
     log.info("Initializing bot")
-    config = ConfigParser()
-    config.read('../configuration.ini')
-    token = config['telegram']['token']
-
     updater = Updater(token)
 
     dp = updater.dispatcher
