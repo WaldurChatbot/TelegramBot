@@ -1,5 +1,4 @@
-# TelegramBot
-[![Build Status](https://travis-ci.org/WaldurChatbot/TelegramBot.svg?branch=master)](https://travis-ci.org/WaldurChatbot/TelegramBot)
+# TelegramBot [![Build Status](https://travis-ci.org/WaldurChatbot/TelegramBot.svg?branch=master)](https://travis-ci.org/WaldurChatbot/TelegramBot)
 Telegram frontend implementation for Waldur chatbot.
 
 ## Project setup  
