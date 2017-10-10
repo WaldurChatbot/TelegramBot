@@ -1,39 +1,34 @@
 #!/bin/bash
 
-# the target should already have cloned this repo
-cd TelegramBot
+NAME="TelegramBot"
+DIRECT="telegrambot"
+SCRIPT="telegrambot.py"
 
-# if supplied argument is 'dev', use develop branch
-if [ ! -z $1 ]; then
-    if [ $1 == "dev" ]; then
-        git checkout develop
-    else
-        git checkout master
-    fi
-else
-    git checkout master
-fi
-
+# we are working on the assumption that the remote server already has cloned this repo
+cd ${NAME}
+git checkout master
 git pull
 
 # install requirements
 sudo pip install -r requirements.txt --upgrade
 
-# kill running tgbot
+# kill process if running
 [ -f pid ] && kill `cat pid`
 
-# start processes
-cd telegrambot
-nohup python3.5 telegrambot.py > /dev/null 2>&1 & echo $! > ../pid
-echo "Started telegram bot"
+# start process
+cd ${DIRECT}
+nohup python3.5 ${SCRIPT} > /dev/null 2>&1 & echo $! > ../pid
+echo "Started ${DIRECT}/${SCRIPT}"
 
 sleep 5
 
-if ps -p `cat ../pid` > /dev/null
+PID=`cat ../pid`
+
+if ps -p ${PID} > /dev/null
 then
-   echo "`cat ../pid` is running"
+   echo "${NAME} is running with pid ${PID}"
    exit 0
 else
-   echo "Telegram bot is not running"
+   echo "${NAME} is not running"
    exit 100
 fi
