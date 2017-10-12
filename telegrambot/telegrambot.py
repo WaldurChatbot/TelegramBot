@@ -7,7 +7,7 @@ import __init__ as init
 from common.request import BackendConnection
 
 
-log = init.logging.getLogger(__name__)
+log = init.getLogger(__name__)
 
 log.info("Read configuration")
 config = ConfigParser()
