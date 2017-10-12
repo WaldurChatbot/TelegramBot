@@ -17,12 +17,10 @@ url   = config['backend']['url'] + ':' + config['backend']['port']
 
 conn = BackendConnection(url)
 
-tokens = {}
-
 
 def query(bot, update):
     user_id = update.effective_user.id
-    token = None if user_id not in tokens else tokens.get(user_id)
+    token = conn.get_token(user_id)
 
     log.debug("user_id: "  + str(user_id) + " token: " + str(token))
     log.debug("IN: " + update.message.text)
@@ -45,7 +43,7 @@ def query(bot, update):
         log.info("OUT: " + response)
     elif update.message.text[:1] == '?':
         log.info("Received token from user " + str(user_id) + " with a length of " + str(len(update.message.text[1:])))
-        tokens[user_id] = update.message.text[1:]
+        conn.add_token(user_id, update.message.text[1:])
         update.message.reply_text("Thanks")
 
 
