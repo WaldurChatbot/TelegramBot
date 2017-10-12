@@ -4,7 +4,7 @@
 from configparser import ConfigParser
 from telegram.ext import Updater, MessageHandler, Filters
 import __init__ as init
-from common.request import BackendConnection, InvalidTokenException
+from common.request import BackendConnection
 
 
 log = init.getLogger(__name__)
@@ -20,31 +20,12 @@ conn = BackendConnection(url)
 
 def query(bot, update):
     user_id = update.effective_user.id
-    token = conn.get_token(user_id)
+    message = update.message.text
 
-    log.debug("user_id: "  + str(user_id) + " token: " + str(token))
-    log.debug("IN: " + update.message.text)
-    if update.message.text[:1] == '!':
-        message = update.message.text[1:]
-        log.info("IN:  " + message)
-        try:
-            response = conn.query(
-                q=message,
-                token=token
-            )
-            response = response['message']
-        except InvalidTokenException:
-            log.info("Needed token to query Waldur, asking user for token.")
-            response = "Needed token to query Waldur API. " \
-                       "Token was either invalid or missing. " \
-                       "Please send token like this '?<TOKEN>'"
+    response = conn.get_response(message, user_id)
 
+    if response is not None:
         update.message.reply_text(response)
-        log.info("OUT: " + response)
-    elif update.message.text[:1] == '?':
-        log.info("Received token from user " + str(user_id) + " with a length of " + str(len(update.message.text[1:])))
-        conn.add_token(user_id, update.message.text[1:])
-        update.message.reply_text("Thanks")
 
 
 def main():
