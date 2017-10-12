@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from common.request import Connection
-from telegram.ext import Updater, MessageHandler, Filters
-import logging.config
-import logging
 from configparser import ConfigParser
+from telegram.ext import Updater, MessageHandler, Filters
+import __init__ as init
+from common.request import BackendConnection
 
-logging.config.fileConfig('../logging_config.ini')
-log = logging.getLogger(__name__)
+
+log = init.logging.getLogger(__name__)
 
 log.info("Read configuration")
 config = ConfigParser()
@@ -16,7 +15,7 @@ config.read('../configuration.ini')
 token = config['telegram']['token']
 url   = config['backend']['url'] + ':' + config['backend']['port']
 
-conn = Connection(url)
+conn = BackendConnection(url)
 
 
 def query(bot, update):
