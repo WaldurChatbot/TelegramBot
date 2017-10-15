@@ -7,3 +7,4 @@ def test_import():
 
 def test_asd():
     assert False
+
