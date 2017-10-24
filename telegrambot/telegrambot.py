@@ -32,17 +32,17 @@ def query(bot, update):
     message = update.message.text
 
     response = conn.get_response(message, user_id)
-    print(str(response))
 
-    if response['type'] == 'text':
-        response = response['data']
-    elif response['type'] == 'graph':
-        pass  # todo handle graph
-    else:
-        raise Exception("Unknown response type")
+    for item in response:
+        if item['type'] == 'text':
+            message = item['data']
+        elif item['type'] == 'graph':
+            pass  # todo handle graph
+        else:
+            raise Exception("Unknown response type")
 
-    if response is not None:
-        update.message.reply_text(response)
+        if response is not None:
+            update.message.reply_text(message)
 
 
 def main():
