@@ -32,12 +32,12 @@ def query(bot, update):
     message = update.message.text
 
     response = conn.get_response(message, user_id)
-
     for item in response:
         if item['type'] == 'text':
             message = item['data']
         elif item['type'] == 'graph':
-            pass  # todo handle graph
+            message = "this should be a graph"
+            # todo get graph id and make graph
         else:
             raise Exception("Unknown response type")
 
