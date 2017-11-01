@@ -14,6 +14,10 @@ log = getLogger(__name__)
 from common.request import BackendConnection
 from common.utils import obscure
 from telegram.ext import Updater, MessageHandler, Filters
+from telegram.error import (TelegramError, Unauthorized, BadRequest,
+                            TimedOut, ChatMigrated, NetworkError)
+import common.graphs as graphs
+from io import BytesIO
 
 
 log.info("Read configuration")
@@ -34,16 +38,30 @@ def query(bot, update):
     response = conn.get_response(message, user_id)
     for item in response:
         if item['type'] == 'text':
-            message = item['data']
+            update.message.reply_text(item['data'])
         elif item['type'] == 'graph':
-            message = "this should be a graph"
-            # todo get graph id and make graph
+            update.message.reply_photo(photo=graphs.make_graph(item['data']))
         else:
             raise Exception("Unknown response type")
 
-        if response is not None:
-            update.message.reply_text(message)
+def error_callback(bot, update, error):
+    try:
+        raise error
+    except:
+        for line in traceback.format_exc().split("\n"): log.error(line)
 
+ #   except Unauthorized as e:
+        # remove update.message.chat_id from conversation list
+ #   except BadRequest:
+        # handle malformed requests - read more below!
+ #   except TimedOut:
+        # handle slow connection problems
+ #   except NetworkError:
+        # handle other connection problems
+#    except ChatMigrated as e:
+        # the chat_id of a group has changed, use e.new_chat_id instead
+  #  except TelegramError:
+        # handle all other telegram related errors
 
 def main():
     log.info("Initializing bot")
@@ -51,6 +69,7 @@ def main():
 
     log.info("Adding handlers")
     updater.dispatcher.add_handler(MessageHandler(Filters.text, query))
+    updater.dispatcher.add_error_handler(error_callback)
 
     log.info("Starting polling")
     updater.start_polling()
