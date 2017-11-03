@@ -7,8 +7,8 @@ echo "Starting deployment"
 # encrypted variables in travis
 USER=${PRODUSER}
 REMOTE=${PRODREMOTE}
-KEY=${encrypted_ec52fa39a227_key}
-IV=${encrypted_ec52fa39a227_iv}
+KEY=${encrypted_a32c773f9b9a_key}
+IV=${encrypted_a32c773f9b9a_iv}
 
 # variables in .travis.yml
 SCRIPT=${LOCAL_DEPLOY_SCRIPT}
