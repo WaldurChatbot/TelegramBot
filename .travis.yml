@@ -2,6 +2,15 @@ language: python
 python:
         - "3.5"
         - "3.6"
+
+env:
+    global:
+        - NAME=TelegramBot
+        - TRAVIS_DIR=.travis/
+        - LOCAL_DEPLOY_SCRIPT=local_deploy.sh
+        - PATH_TO_RUN_SCRIPT=telegrambot
+        - RUN_SCRIPT=telegrambot.py
+
 install:
         - pip install -r requirements.txt
 
@@ -14,3 +23,4 @@ deploy:
         on:
                 branch: master
                 python: "3.5"
+
