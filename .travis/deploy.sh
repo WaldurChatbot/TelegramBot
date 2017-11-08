@@ -1,17 +1,33 @@
 #!/bin/bash
 
+# Script that is executed by travis.
+# Moves remote deploy script to remote machine and executes it
+
 echo "Starting deployment"
-echo "Setting up variables"
-# variables in travis
-USER=${PRODUSER}
-REMOTE=${PRODREMOTE}
+
+# variables in .travis.yml
+SCRIPT=${LOCAL_DEPLOY_SCRIPT}
+ENCRYPTED_KEY=${TRAVIS_DIR}"deploy_rsa.enc"
+DECRYPTED_KEY=${TRAVIS_DIR}"deploy_rsa"
+
+# general travis variable
+BRANCH=${TRAVIS_BRANCH}
+CLONE_URL="https://github.com/"${TRAVIS_REPO_SLUG}
+
+# encrypted variables in travis
+if [ "${BRANCH}" == "master" ]
+then
+    USER=${PRODUSER}
+    REMOTE=${PRODREMOTE}
+elif [ "${BRANCH}" == "develop" ]
+then
+    USER=${DEVUSER}
+    REMOTE=${DEVREMOTE}
+else
+    exit 1
+fi
 KEY=${encrypted_a32c773f9b9a_key}
 IV=${encrypted_a32c773f9b9a_iv}
-
-# paths
-SCRIPT="local_deploy_telegram.sh"
-ENCRYPTED_KEY=".travis/deploy_rsa.enc"
-DECRYPTED_KEY=".travis/deploy_rsa"
 
 echo "Decrypting private key"
 openssl aes-256-cbc \
@@ -24,7 +40,15 @@ openssl aes-256-cbc \
 chmod 600 ${DECRYPTED_KEY}
 
 echo "Moving ${SCRIPT} to remote"
-scp -o "StrictHostKeyChecking no" -i ${DECRYPTED_KEY} .travis/${SCRIPT} ${USER}@${REMOTE}:~/
+scp \
+    -o "StrictHostKeyChecking no" \
+    -i ${DECRYPTED_KEY} \
+    ${TRAVIS_DIR}${SCRIPT} \
+    ${USER}@${REMOTE}:~/
 
 echo "Executing ${SCRIPT} in remote"
-ssh -o "StrictHostKeyChecking no" -i ${DECRYPTED_KEY} ${USER}@${REMOTE} ./${SCRIPT}
+ssh \
+    -o "StrictHostKeyChecking no" \
+    -i ${DECRYPTED_KEY} \
+    ${USER}@${REMOTE} \
+    ./${SCRIPT} ${NAME} ${PATH_TO_RUN_SCRIPT} ${RUN_SCRIPT} ${BRANCH} ${CLONE_URL}

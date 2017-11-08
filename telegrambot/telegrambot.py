@@ -44,24 +44,13 @@ def query(bot, update):
         else:
             raise Exception("Unknown response type")
 
+
 def error_callback(bot, update, error):
     try:
         raise error
     except:
         for line in traceback.format_exc().split("\n"): log.error(line)
 
- #   except Unauthorized as e:
-        # remove update.message.chat_id from conversation list
- #   except BadRequest:
-        # handle malformed requests - read more below!
- #   except TimedOut:
-        # handle slow connection problems
- #   except NetworkError:
-        # handle other connection problems
-#    except ChatMigrated as e:
-        # the chat_id of a group has changed, use e.new_chat_id instead
-  #  except TelegramError:
-        # handle all other telegram related errors
 
 def main():
     log.info("Initializing bot")
