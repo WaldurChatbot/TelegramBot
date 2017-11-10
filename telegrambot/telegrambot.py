@@ -1,30 +1,36 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import os
 import traceback
 from configparser import ConfigParser
 from logging import getLogger
 from logging.config import fileConfig
-from os import path
 
-log_file_path = path.join(path.dirname(path.abspath(__file__)), '..', 'logging_config.ini')
-fileConfig(log_file_path)
+fileConfig("../logging_config.ini")
 log = getLogger(__name__)
+
 # logger must be loaded before the following imports, otherwise no logging from them
 from common.request import BackendConnection
 from common.utils import obscure
 from telegram.ext import Updater, MessageHandler, Filters
-from telegram.error import (TelegramError, Unauthorized, BadRequest,
-                            TimedOut, ChatMigrated, NetworkError)
 import common.graphs as graphs
-from io import BytesIO
+
+# If config file location is setup in environment variables
+# then read conf from there, otherwise from project root
+if 'WALDUR_CONFIG' in os.environ:
+    config_path = os.environ['WALDUR_CONFIG']
+else:
+    config_path = '../configuration.ini'
 
 
-log.info("Read configuration")
+log.info("Reading configuration from {}".format(config_path))
 config = ConfigParser()
-config.read('../configuration.ini')
+config.read(config_path)
+
 telegram_token = config['telegram']['token']
-url   = config['backend']['url'] + ':' + config['backend']['port']
+url = config['backend']['url'] + ':' + config['backend']['port']
+
 log.info("Telegram token: {}".format(obscure(telegram_token)))
 log.info("Backend url: {}".format(url))
 
