@@ -14,7 +14,7 @@ log = getLogger(__name__)
 from common.request import BackendConnection
 from common.utils import obscure
 from telegram.ext import Updater, MessageHandler, Filters
-import common.graphs as graphs
+from common.graphs import make_graph
 
 # If config file location is setup in environment variables
 # then read conf from there, otherwise from project root
@@ -46,7 +46,7 @@ def query(bot, update):
         if item['type'] == 'text':
             update.message.reply_text(item['data'])
         elif item['type'] == 'graph':
-            update.message.reply_photo(photo=graphs.make_graph(item['data']))
+            update.message.reply_photo(photo=make_graph(item['data']))
         else:
             raise Exception("Unknown response type")
 
