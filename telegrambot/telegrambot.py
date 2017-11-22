@@ -2,7 +2,6 @@
 # coding: utf-8
 
 import os
-import traceback
 from configparser import ConfigParser
 from logging import getLogger
 from logging.config import fileConfig
@@ -15,7 +14,7 @@ from common.request import BackendConnection
 import traceback
 from common.utils import obscure
 from telegram.ext import Updater, MessageHandler, Filters
-import common.graphs as graphs
+from common.graphs import make_graph
 
 # If config file location is setup in environment variables
 # then read conf from there, otherwise from project root
@@ -42,21 +41,26 @@ def query(bot, update):
     user_id = update.effective_user.id
     message = update.message.text
 
-    response = conn.get_response(message, user_id)
+    prefix = message[0]
+    if prefix == '!':
+        response = conn.get_response(message[1:], user_id)
+    elif prefix == '?':
+        response = conn.set_token(message[1:], user_id)
+    else:
+        response = []
+
     for item in response:
         if item['type'] == 'text':
             update.message.reply_text(item['data'])
         elif item['type'] == 'graph':
-            update.message.reply_photo(photo=graphs.make_graph(item['data']))
+            update.message.reply_photo(photo=make_graph(item['data']))
         else:
             raise Exception("Unknown response type")
 
 
 def error_callback(bot, update, error):
-    try:
-        raise error
-    except:
-        for line in traceback.format_exc().split("\n"): log.error(line)
+    log.exception("Error from update: {}".format(update))
+    log.exception(error)
 
 
 def error_callback(bot, update, error):
