@@ -11,7 +11,6 @@ log = getLogger(__name__)
 
 # logger must be loaded before the following imports, otherwise no logging from them
 from common.request import BackendConnection
-import traceback
 from common.utils import obscure
 from telegram.ext import Updater, MessageHandler, Filters
 from common.graphs import make_graph
@@ -29,12 +28,14 @@ config = ConfigParser()
 config.read(config_path)
 
 telegram_token = config['telegram']['token']
-url = config['backend']['url'] + ':' + config['backend']['port']
+backend_url = config['backend']['url'] + ':' + config['backend']['port']
+auth_url = config['auth']['url'] + ':' + config['auth']['port']
 
 log.info("Telegram token: {}".format(obscure(telegram_token)))
-log.info("Backend url: {}".format(url))
+log.info("Backend url: {}".format(backend_url))
+log.info("Auth url: {}".format(auth_url))
 
-conn = BackendConnection(url)
+conn = BackendConnection(backend_url, auth_url)
 
 
 def query(bot, update):
@@ -61,13 +62,6 @@ def query(bot, update):
 def error_callback(bot, update, error):
     log.exception("Error from update: {}".format(update))
     log.exception(error)
-
-
-def error_callback(bot, update, error):
-    try:
-        raise error
-    except:
-        for line in traceback.format_exc().split("\n"): log.error(line)
 
 
 def main():
