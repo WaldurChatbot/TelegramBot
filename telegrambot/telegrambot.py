@@ -29,7 +29,10 @@ config.read(config_path)
 
 telegram_token = config['telegram']['token']
 backend_url = config['backend']['url'] + ':' + config['backend']['port']
-auth_url = config['auth']['url'] + ':' + config['auth']['port']
+
+auth_url = config['auth']['url']
+if config['auth']['port'] != '80':
+    auth_url += ':' + config['auth']['port']
 
 log.info("Telegram token: {}".format(obscure(telegram_token)))
 log.info("Backend url: {}".format(backend_url))
