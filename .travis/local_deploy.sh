@@ -52,6 +52,9 @@ fi
 # install requirements
 sudo python3.6 -m pip install -r requirements.txt --upgrade
 
+# install the correct version of common
+sudo python3.6 -m pip install git+https://github.com/WaldurChatbot/Waldur-Chatbot@${BRANCH} --upgrade
+
 # kill process if running
 [ -f pid ] && kill `cat pid`
 
