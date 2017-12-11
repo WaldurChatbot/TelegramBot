@@ -41,6 +41,7 @@ fi
 # if dir exists, we assume the repo is already cloned
 if cd ${NAME}
 then
+	git add .
     git stash
     git checkout ${BRANCH}
     git pull
@@ -53,7 +54,7 @@ fi
 sudo python3.6 -m pip install -r requirements.txt --upgrade
 
 # install the correct version of common
-#sudo python3.6 -m pip install git+https://github.com/WaldurChatbot/Waldur-Chatbot@${BRANCH} --upgrade
+sudo python3.6 -m pip install git+https://github.com/WaldurChatbot/Waldur-Chatbot@${BRANCH} --upgrade
 
 # kill process if running
 [ -f pid ] && kill `cat pid`
