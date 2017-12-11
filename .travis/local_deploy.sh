@@ -41,7 +41,6 @@ fi
 # if dir exists, we assume the repo is already cloned
 if cd ${NAME}
 then
-	git add .
     git stash
     git checkout ${BRANCH}
     git pull
